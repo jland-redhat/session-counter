@@ -2,13 +2,13 @@
 <jboss-web>
     <context-root>/counter</context-root>
     <replication-config>
-        <replication-trigger>SET_AND_GET</replication-trigger>
-        <replication-granularity>SESSION</replication-granularity>
+<!--         <replication-trigger>SET_AND_GET</replication-trigger>
+ -->        <replication-granularity>SESSION</replication-granularity>
         <!-- <replication-granularity>ATTRIBUTE</replication-granularity> -->  
         
 <!--         <cache-name>web.jdg-invalidation</cache-name> -->
 		<!-- <cache-name>web.jdg-replication</cache-name> -->
-		<cache-name>web</cache-name>
+		<cache-name>web.jdg</cache-name>
 		
         <!-- <snapshot-mode>INSTANT</snapshot-mode> -->
         

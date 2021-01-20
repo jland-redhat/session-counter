@@ -693,7 +693,7 @@
         <socket-binding name="modcluster" multicast-address="${jboss.modcluster.multicast.address:224.0.1.105}" multicast-port="23364"/>
         <!-- Datagrid Custom Code (HOST INFORMATION) -->
         <outbound-socket-binding name="remote-jdg-server1">
-          <remote-destination host="example-infinispan.svc" port="11222"/>
+          <remote-destination host="example-infinispan.example.svc" port="11222"/>
         </outbound-socket-binding>
         <outbound-socket-binding name="http-messaging">
             <remote-destination host="${jboss.messaging.host:localhost}" port="${jboss.http.port:8080}"/>

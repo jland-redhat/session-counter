@@ -40,6 +40,15 @@
         <extension module="org.wildfly.extension.undertow"/>
         <!-- ##KEYCLOAK_EXTENSION## -->
     </extensions>
+    <system-properties>
+        <property name="hotrod.auth_username" value="${env.DATAGRID_USERNAME}"/>
+        <property name="hotrod.auth_password" value="${env.DATAGRID_PASSWORD}"/>
+        <property name="hotrod.auth_realm" value="default" />
+        <property name="hotrod.auth_server_name" value="infinispan"/>
+        <property name="hotrod.sasl_mechanism" value="DIGEST-MD5"/>
+        <property name="hotrod.trust_store_path" value="/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt" />
+        <property name="jboss.site.name" value="site"/>
+    </system-properties>
     <management>
         <security-realms>
             <security-realm name="ManagementRealm">
@@ -47,7 +56,7 @@
                     <local default-user="$local" skip-group-loading="true"/>
                     <properties path="mgmt-users.properties" relative-to="jboss.server.config.dir"/>
                 </authentication>
-                <authorization map-groups-to-roles="false">
+                <authorization map-groups-to-rolsystem-propertieses="false">
                     <properties path="mgmt-groups.properties" relative-to="jboss.server.config.dir"/>
                 </authorization>
             </security-realm>
@@ -378,8 +387,19 @@
                   <locking isolation="REPEATABLE_READ"/>
                   <transaction mode="BATCH"/>
                   <remote-store remote-servers="remote-jdg-server1"
-                                cache="default" socket-timeout="60000"
-                                preload="true" passivation="false" purge="false" shared="true"/>
+                        cache="default" socket-timeout="60000"
+                        preload="true" passivation="false" purge="false" shared="true">
+                        <property name="rawValues">true</property>
+                        <property name="infinispan.client.hotrod.use_ssl">true</property>
+                        <property name="infinispan.client.hotrod.use_auth">true</property>
+                        <property name="infinispan.client.hotrod.auth_username">${hotrod.auth_username}</property>
+                        <property name="infinispan.client.hotrod.auth_password">${hotrod.auth_password}</property>
+                        <property name="infinispan.client.hotrod.auth_realm">default</property>
+                        <property name="infinispan.client.hotrod.auth_server_name">${hotrod.auth_server_name}</property>
+                        <property name="infinispan.client.hotrod.sasl_mechanism">${hotrod.sasl_mechanism}</property>
+                        <property name="infinispan.client.hotrod.trust_store_path">${hotrod.trust_store_path}</property>
+                        <property name="infinispan.client.hotrod.sasl_properties.javax.security.sasl.qop">auth</property>
+                    </remote-store>
                 </invalidation-cache>
             </cache-container>
             <cache-container name="ejb" aliases="sfsb" default-cache="repl" module="org.wildfly.clustering.ejb.infinispan">
@@ -673,8 +693,7 @@
         <socket-binding name="modcluster" multicast-address="${jboss.modcluster.multicast.address:224.0.1.105}" multicast-port="23364"/>
         <!-- Datagrid Custom Code (HOST INFORMATION) -->
         <outbound-socket-binding name="remote-jdg-server1">
-          <!-- CHANGE NAMESPACE -->
-          <remote-destination host="example-infinispan.example.svc" port="11222"/>
+          <remote-destination host="example-infinispan.svc" port="11222"/>
         </outbound-socket-binding>
         <outbound-socket-binding name="http-messaging">
             <remote-destination host="${jboss.messaging.host:localhost}" port="${jboss.http.port:8080}"/>
